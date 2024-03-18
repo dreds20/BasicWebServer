@@ -21,7 +21,7 @@ public class DatabasePageManager implements PageManager {
     private static final String PAGE = "page";
     private static final String VERBS = "verbs";
     private static final String CONTENT_TYPE = "content_type";
-    private static final String URI = "uri";
+    private static final String PATH = "path";
     public DatabasePageManager() {
     }
 
@@ -32,8 +32,8 @@ public class DatabasePageManager implements PageManager {
                 return builder.pageName(resultSet.getString(PAGE))
                         .verbs(Stream.of(resultSet.getString(VERBS).split(",")).map(HttpVerb::valueOf).collect(Collectors.toList()))
                         .contentType(resultSet.getString(CONTENT_TYPE))
-                        .uri(new URI(resultSet.getString(URI)));
-            } catch (SQLException | URISyntaxException e) {
+                        .path(resultSet.getString(PATH));
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -45,7 +45,7 @@ public class DatabasePageManager implements PageManager {
      * @return A list of page objects retrieved from the server database
      */
     @Override
-    public List<Page> pages() {
+    public List<Page> pages() throws Exception {
         List<Page> pages = new ArrayList<>();
         try (DataBase dataBase = new DataBase()){
             Connection connection = dataBase.connect();
@@ -55,7 +55,7 @@ public class DatabasePageManager implements PageManager {
                 pages.add(buildPage(resultSet));
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw e;
         }
         return pages;
     }

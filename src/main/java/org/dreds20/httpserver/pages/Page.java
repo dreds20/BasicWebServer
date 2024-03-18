@@ -26,5 +26,5 @@ public interface Page {
     String pageName();
     List<HttpVerb> verbs();
     String contentType();
-    URI uri();
+    String path();
 }
