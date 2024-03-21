@@ -1,18 +1,24 @@
 package org.dreds20.httpserver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dreds20.httpserver.model.HttpRequest;
-import org.dreds20.httpserver.model.HttpResponse;
-import org.dreds20.httpserver.model.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * The Connection class extends from the Thread class, and is responsible for
+ * handling a connection to the HTTP server, performing a lookup of the request
+ * provided, returning a response, and closing the connection.
+ */
 public class Connection extends Thread {
+    private static final Logger log = LogManager.getLogger(Connection.class);
     private final Socket socket;
     private final ConnectionManager connectionManager;
 
@@ -21,15 +27,37 @@ public class Connection extends Thread {
         this.connectionManager = connectionManager;
     }
 
+    private HttpRequest extractRequest(BufferedReader in) throws IOException {
+        List<String> rawRequest = new ArrayList<>();
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null && in.ready()) {
+            log.trace("Line: {}", inputLine);
+            rawRequest.add(inputLine);
+        }
+
+        return HttpRequest.from(rawRequest);
+    }
+
     @Override
     public void run() {
-        try {
-            List<String> rawRequest = new BufferedReader(new InputStreamReader(socket.getInputStream())).lines().collect(Collectors.toList());
-            HttpRequest request = HttpRequest.from(rawRequest);
+        try (socket;
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter out = new PrintWriter(socket.getOutputStream())) {
+            log.info("Managing connection to server..");
+
+            HttpRequest request = extractRequest(in);
+            log.debug("Request received: {}", request);
+
             String response = connectionManager.getResponse(request);
-            socket.getOutputStream().write(response.getBytes(StandardCharsets.UTF_8));
+            log.debug("Dispatching response: {}", response);
+
+            out.print(response);
+
+            log.info("Response dispatched..");
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Error thrown while attempting to generate response", e);
         }
     }
 }
