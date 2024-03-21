@@ -29,6 +29,6 @@ public interface HttpServerConfig {
     }
 
     static HttpServerConfig create(UnaryOperator<HttpServerConfigImpl.Builder> spec) {
-        return spec.apply(builder()).build();
+        return builder(spec).build();
     }
 }

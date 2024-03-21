@@ -1,14 +1,12 @@
 package org.dreds20.httpserver.pages;
 
 import org.dreds20.db.DataBase;
+import org.dreds20.db.DataBaseConfig;
 import org.dreds20.httpserver.model.HttpVerb;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +20,9 @@ public class DatabasePageManager implements PageManager {
     private static final String VERBS = "verbs";
     private static final String CONTENT_TYPE = "content_type";
     private static final String PATH = "path";
-    public DatabasePageManager() {
+    private final DataBaseConfig dbConfig;
+    public DatabasePageManager(DataBaseConfig dbConfig) {
+        this.dbConfig = dbConfig;
     }
 
     private Page buildPage(ResultSet resultSet) {
@@ -47,10 +47,10 @@ public class DatabasePageManager implements PageManager {
     @Override
     public List<Page> pages() throws Exception {
         List<Page> pages = new ArrayList<>();
-        try (DataBase dataBase = new DataBase()){
+        try (DataBase dataBase = new DataBase(dbConfig)){
             Connection connection = dataBase.connect();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM pages;");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM pages;");
+            ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 pages.add(buildPage(resultSet));
             }
