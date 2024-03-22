@@ -58,7 +58,8 @@ public interface HttpRequest {
      *
      * @return String - The body of the HTTP request
      */
-    String body();
+
+    Optional<String> body();
 
 
     private static void parseFirstLine(HttpRequestImpl.Builder builder, String firstLine) {
@@ -97,7 +98,7 @@ public interface HttpRequest {
 
         for (int i = 1; i < rawRequest.size(); i++) {
             String currentLine = rawRequest.get(i);
-            if (currentLine.isEmpty()) {
+            if (currentLine.isEmpty() && !emptyLine) {
                 emptyLine = true;
                 continue;
             } else if (emptyLine) {

@@ -27,12 +27,19 @@ public class HttpServer extends Thread {
     private boolean running = false;
     private final HttpServerConfig config;
 
-    public HttpServer(HttpServerConfig config) {
+    private HttpServer(HttpServerConfig config) {
+        if (config == null) {
+            throw new NullPointerException("Provided configuration is null");
+        }
         this.config = config;
     }
 
     public static HttpServer create(UnaryOperator<HttpServerConfigImpl.Builder> spec) {
         return new HttpServer(HttpServerConfig.create(spec));
+    }
+
+    public static HttpServer create(HttpServerConfig config) {
+        return new HttpServer(config);
     }
 
     @Override

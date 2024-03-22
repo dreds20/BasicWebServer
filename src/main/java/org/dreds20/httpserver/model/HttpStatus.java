@@ -1,84 +1,90 @@
 package org.dreds20.httpserver.model;
 
-public class HttpStatus {
-    private int code;
-    private String message;
+import java.security.InvalidParameterException;
+import java.util.stream.Stream;
 
-    private HttpStatus(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    private static HttpStatus from(int code, String message) {
-        return new HttpStatus(code, message);
-    }
-
+public enum HttpStatus {
     // 2xx - SUCCESS
-    public static HttpStatus OK = from(200, "OK");
-    public static HttpStatus CREATED = from(201, "Created");
-    public static HttpStatus ACCEPTED = from(202, "Accepted");
-    public static HttpStatus NON_AUTHORITATIVE_INFORMATION = from(203, "Non-Authoritative Information");
-    public static HttpStatus NO_CONTENT = from(204, "No Content");
-    public static HttpStatus RESET_CONTENT = from(205, "Reset Content");
-    public static HttpStatus PARTIAL_CONTENT = from(206, "Partial Content");
-    public static HttpStatus MULTI_STATUS = from(207, "Multi-Status");
-    public static HttpStatus ALREADY_REPORTED = from(208, "Already Reported");
-    public static HttpStatus IM_USED = from(226, "IM Used");
-
+    OK( 200, "OK"),
+    CREATED( 201, "Created"),
+    ACCEPTED(202, "Accepted"),
+    NON_AUTHORITATIVE_INFORMATION(203, "Non-Authoritative Information"),
+    NO_CONTENT(204, "No Content"),
+    RESET_CONTENT(205, "Reset Content"),
+    PARTIAL_CONTENT(206, "Partial Content"),
+    MULTI_STATUS(207, "Multi-Status"),
+    ALREADY_REPORTED(208, "Already Reported"),
+    IM_USED(226, "IM Used"),
+    
     // 3xx - REDIRECTION
-    public static HttpStatus MULTIPLE_CHOICES = from(300, "Multiple Choices");
-    public static HttpStatus MOVED_PERMANENTLY = from(301, "Moved Permanently");
-    public static HttpStatus FOUND = from(302, "Found");
-    public static HttpStatus SEE_OTHER = from(303, "See Other");
-    public static HttpStatus NOT_MODIFIED = from(304, "Not Modified");
-    public static HttpStatus USE_PROXY = from(305, "Use Proxy");
-    public static HttpStatus SWITCH_PROXY = from(306, "Switch Proxy");
-    public static HttpStatus TEMPORARY_REDIRECT = from(307, "Temporary Redirect");
-    public static HttpStatus PERMANENT_REDIRECT = from(307, "Permanent Redirect");
+    MULTIPLE_CHOICES(300, "Multiple Choices"),
+    MOVED_PERMANENTLY(301, "Moved Permanently"),
+    FOUND(302, "Found"),
+    SEE_OTHER(303, "See Other"),
+    NOT_MODIFIED(304, "Not Modified"),
+    USE_PROXY(305, "Use Proxy"),
+    SWITCH_PROXY(306, "Switch Proxy"),
+    TEMPORARY_REDIRECT(307, "Temporary Redirect"),
+    PERMANENT_REDIRECT(307, "Permanent Redirect"),
 
     // 4xx CLIENT ERRORS
-    public static HttpStatus BAD_REQUEST = from(400, "Bad Request");
-    public static HttpStatus UNAUTHORISED = from(401, "Unauthorised");
-    public static HttpStatus PAYMENT_REQUIRED = from(402, "Payment Required");
-    public static HttpStatus FORBIDDEN = from(403, "Forbidden");
-    public static HttpStatus NOT_FOUND = from(404, "Not Found");
-    public static HttpStatus METHOD_NOT_ALLOWED = from(405, "Method Not Allowed");
-    public static HttpStatus NOT_ACCEPTABLE = from(406, "Not Acceptable");
-    public static HttpStatus PROXY_AUTHENTICATION_REQUIRED = from(407, "Proxy Authentication Required");
-    public static HttpStatus REQUEST_TIMEOUT = from(408, "Request Timeout");
-    public static HttpStatus CONFLICT = from(409, "Conflict");
-    public static HttpStatus GONE = from(410, "Gone");
-    public static HttpStatus LENGTH_REQUIRED = from(411, "Length Required");
-    public static HttpStatus PRECONDITION_FAILED = from(412, "Precondition Failed");
-    public static HttpStatus PAYLOAD_TOO_LARGE = from(413, "Payload Too Large");
-    public static HttpStatus URI_TOO_LONG = from(414, "URI Too Long");
-    public static HttpStatus UNSUPPORTED_MEDIA_TYPE = from(415, "Unsupported Media Type");
-    public static HttpStatus RANGE_NOT_SATISFIABLE = from(416, "Range Not Satisfiable");
-    public static HttpStatus EXPECTATION_FAILED = from(417, "Expectation Failed");
-    public static HttpStatus IM_A_TEAPOT = from(418, "I'm a teapot"); // why not implement it, nice easter egg
-    public static HttpStatus MISDIRECTED_REQUEST = from(421, "Misdirected Request");
-    public static HttpStatus UNPROCESSABLE_CONTENT = from(422, "Unprocessable Content");
-    public static HttpStatus LOCKED = from(423, "Locked");
-    public static HttpStatus FAILED_DEPENDENCY = from(424, "Failed Dependency");
-    public static HttpStatus TOO_EARLY = from(425, "Too Early");
-    public static HttpStatus UPGRADE_REQUIRED = from(426, "Upgrade Required");
-    public static HttpStatus PRECONDITION_REQUIRED = from(428, "Precondition Required");
-    public static HttpStatus TOO_MANY_REQUESTS = from(429, "Too Many Requests");
-    public static HttpStatus REQUEST_HEADER_FIELDS_TOO_LARGE = from(431, "Request Header Fields Too Large");
-    public static HttpStatus UNAVAILABLE_FOR_LEGAL_REASONS = from(451, "Unavailable For Legal Reasons");
+    BAD_REQUEST(400, "Bad Request"),
+    UNAUTHORISED(401, "Unauthorised"),
+    PAYMENT_REQUIRED(402, "Payment Required"),
+    FORBIDDEN(403, "Forbidden"),
+    NOT_FOUND(404, "Not Found"),
+    METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
+    NOT_ACCEPTABLE(406, "Not Acceptable"),
+    PROXY_AUTHENTICATION_REQUIRED(407, "Proxy Authentication Required"),
+    REQUEST_TIMEOUT(408, "Request Timeout"),
+    CONFLICT(409, "Conflict"),
+    GONE(410, "Gone"),
+    LENGTH_REQUIRED(411, "Length Required"),
+    PRECONDITION_FAILED(412, "Precondition Failed"),
+    PAYLOAD_TOO_LARGE(413, "Payload Too Large"),
+    URI_TOO_LONG(414, "URI Too Long"),
+    UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type"),
+    RANGE_NOT_SATISFIABLE(416, "Range Not Satisfiable"),
+    EXPECTATION_FAILED(417, "Expectation Failed"),
+    IM_A_TEAPOT(418, "I'm a teapot"), // why not implement it, nice easter egg
+    MISDIRECTED_REQUEST(421, "Misdirected Request"),
+    UNPROCESSABLE_CONTENT(422, "Unprocessable Content"),
+    LOCKED(423, "Locked"),
+    FAILED_DEPENDENCY(424, "Failed Dependency"),
+    TOO_EARLY(425, "Too Early"),
+    UPGRADE_REQUIRED(426, "Upgrade Required"),
+    PRECONDITION_REQUIRED(428, "Precondition Required"),
+    TOO_MANY_REQUESTS(429, "Too Many Requests"),
+    REQUEST_HEADER_FIELDS_TOO_LARGE(431, "Request Header Fields Too Large"),
+    UNAVAILABLE_FOR_LEGAL_REASONS(451, "Unavailable For Legal Reasons"),
 
     // 5xx SERVER ERRORS
-    public static HttpStatus INTERNAL_SERVER_ERROR = from(500, "Internal Server Error");
-    public static HttpStatus NOT_IMPLEMENTED = from(501, "Not Implemented");
-    public static HttpStatus BAD_GATEWAY = from(502, "Bad Gateway");
-    public static HttpStatus SERVICE_UNAVAILABLE = from(503, "Service Unavailable");
-    public static HttpStatus GATEWAY_TIMEOUT = from(504, "Gateway Timeout");
-    public static HttpStatus HTTP_VERSION_NOT_SUPPORTED = from(505, "HTTP Version Not Supported");
-    public static HttpStatus VARIANT_ALSO_NEGOTIATES = from(506, "Variant Also Negotiates");
-    public static HttpStatus INSUFFICIENT_STORAGE = from(507, "Insufficient Storage");
-    public static HttpStatus LOOP_DETECTED = from(508, "Loop Detected");
-    public static HttpStatus NOT_EXTENDED = from(510, "Not Extended");
-    public static HttpStatus NETWORK_AUTHENTICATION_REQUIRED = from(511, "Network Authentication Required");
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+    NOT_IMPLEMENTED(501, "Not Implemented"),
+    BAD_GATEWAY(502, "Bad Gateway"),
+    SERVICE_UNAVAILABLE(503, "Service Unavailable"),
+    GATEWAY_TIMEOUT(504, "Gateway Timeout"),
+    HTTP_VERSION_NOT_SUPPORTED(505, "HTTP Version Not Supported"),
+    VARIANT_ALSO_NEGOTIATES(506, "Variant Also Negotiates"),
+    INSUFFICIENT_STORAGE(507, "Insufficient Storage"),
+    LOOP_DETECTED(508, "Loop Detected"),
+    NOT_EXTENDED(510, "Not Extended"),
+    NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required");
+    
+    private HttpStatus(int code, String message) {
+        this.message = message;
+        this.code = code;
+    }
+    private int code;
+    private String message;
+    
+
+    public static HttpStatus fromCode(int code) {
+        return Stream.of(HttpStatus.values())
+                .filter(v -> v.code == code)
+                .findFirst()
+                .orElseThrow(() -> new InvalidParameterException("Code does not match known response codes"));
+    }
 
     @Override
     public String toString() {

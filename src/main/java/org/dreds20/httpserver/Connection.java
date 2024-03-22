@@ -30,8 +30,7 @@ public class Connection extends Thread {
     private HttpRequest extractRequest(BufferedReader in) throws IOException {
         List<String> rawRequest = new ArrayList<>();
         String inputLine;
-
-        while ((inputLine = in.readLine()) != null && in.ready()) {
+        while (in.ready() && (inputLine = in.readLine()) != null) {
             log.trace("Line: {}", inputLine);
             rawRequest.add(inputLine);
         }
@@ -50,7 +49,7 @@ public class Connection extends Thread {
             log.debug("Request received: {}", request);
 
             String response = connectionManager.getResponse(request);
-            log.debug("Dispatching response: {}", response);
+            log.info("Dispatching response: {}", response);
 
             out.print(response);
 

@@ -1,5 +1,7 @@
 package org.dreds20.httpserver.model;
 
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,41 +12,64 @@ import static org.assertj.core.api.Assertions.*;
 public class HttpResponseTest {
 
     @Test
-    public void exceptionThrownWhenAttemptingToBuildWithoutStatusCode() {
+    void exceptionThrownWhenAttemptingToBuildWithoutStatusCode() {
         assertThatThrownBy(() -> HttpResponse.builder().version("HTTP/1.0").build()).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    public void defaultVersion() {
+    void defaultVersion() {
         assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).build().toString()).isEqualTo("HTTP/1.1 200 OK");
     }
 
     @Test
-    public void onlyVersionAndStatus() {
+    void onlyVersionAndStatus() {
         HttpResponse response = HttpResponse.builder().version("HTTP/1.0").statusCode(HttpStatus.OK).build();
         assertThat(response.toString()).isEqualTo("HTTP/1.0 200 OK");
     }
 
     @Test
-    public void headersAreIncluded() {
+    void headersAreIncluded() {
         Map<String, String> headers = Map.of("Content-Type", "text/html");
         assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
                 "Content-Type: text/html");
     }
 
     @Test
-    public void bodyIsIncluded() {
+    void bodyIsIncluded() {
         String body = "Test body";
         assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
                 "\n" + body);
     }
 
     @Test
-    public void bodyAndHeadersAreIncluded() {
+    void bodyAndHeadersAreIncluded() {
         String body = "Test body";
         Map<String, String> headers = Map.of("Content-Type", "text/html");
         assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
                 "Content-Type: text/html\n" +
                 "\n" + body);
+    }
+
+    @Test
+    void ResponseCanBeCreatedFromString() {
+        String body = "<head>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <h1>Index</h1>\n" +
+                "\n" + // Adding a new line to make sure the parsing catches this
+                "</body>";
+
+        String rawResponse = "HTTP/1.1 200 OK\n" +
+                "Date: Fri, 22 Mar 2024 15:35:22 GMT\n" +
+                "Content-Type: text/html\n" +
+                "\n" + body;
+
+        HttpResponse response = HttpResponse.from(rawResponse);
+        SoftAssertions responseBundle = new SoftAssertions();
+        responseBundle.assertThat(response.version()).isEqualTo("HTTP/1.1");
+        responseBundle.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK);
+        responseBundle.assertThat(response.headers().get("Date")).isEqualTo("Fri, 22 Mar 2024 15:35:22 GMT");
+        responseBundle.assertThat(response.headers().get("Content-Type")).isEqualTo("text/html");
+        responseBundle.assertThat(response.body()).isEqualTo(body.split("\n"));
     }
 }

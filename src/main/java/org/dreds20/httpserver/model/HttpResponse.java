@@ -68,4 +68,38 @@ public abstract class HttpResponse {
         }
         return sb.toString();
     }
+
+    private static void parseFistLine(String firstLine, HttpResponseImpl.Builder builder) {
+        String[] tokens = firstLine.split(" ");
+        if (tokens.length < 3) {
+            throw new IllegalStateException("First line of response string has insufficient values: " + firstLine);
+        }
+        builder.version(tokens[0]);
+        builder.statusCode(HttpStatus.fromCode(Integer.parseInt(tokens[1])));
+    }
+
+    public static HttpResponse from(String response) {
+        if (response == null) {
+            throw new NullPointerException("Cannot parse null string to Http response");
+        }
+        HttpResponseImpl.Builder builder = HttpResponse.builder();
+        List<String> responseList = List.of(response.split("\n"));
+        if (!responseList.isEmpty()) {
+            parseFistLine(responseList.getFirst(), builder);
+        }
+
+        boolean emptyLine = false;
+        for (int i = 1; i < responseList.size(); i++) {
+            if (responseList.get(i).isEmpty() && !emptyLine) {
+                emptyLine = true;
+                continue;
+            } else if (emptyLine) {
+                builder.addBody(responseList.get(i));
+                continue;
+            }
+            String[] keyPair = responseList.get(i).split(":", 2);
+            builder.putHeader(keyPair[0].trim(), keyPair[1].trim());
+        }
+        return builder.build();
+    }
 }
