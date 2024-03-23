@@ -43,17 +43,17 @@ public class Connection extends Thread {
         try (socket;
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream())) {
-            log.info("Managing connection to server..");
+            log.debug("Managing connection to server..");
 
             HttpRequest request = extractRequest(in);
             log.debug("Request received: {}", request);
 
             String response = connectionManager.getResponse(request);
-            log.info("Dispatching response: {}", response);
+            log.debug("Dispatching response: {}", response);
 
             out.print(response);
 
-            log.info("Response dispatched..");
+            log.debug("Response dispatched..");
 
         } catch (IOException e) {
             log.error("Error thrown while attempting to generate response", e);

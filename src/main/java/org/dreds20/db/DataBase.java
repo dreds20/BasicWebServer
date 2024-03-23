@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * Requires a non-null configuration object.
  */
-public class DataBase implements AutoCloseable {
+public class DataBase {
     private static final Logger log = LogManager.getLogger(DataBase.class.getName());
     private Connection connection = null;
     private final DataBaseConfig config;
@@ -32,12 +32,5 @@ public class DataBase implements AutoCloseable {
             log.info("Connection to db established..");
         }
         return connection;
-    }
-
-    @Override
-    public void close() throws Exception {
-        if (connection != null) {
-            connection.close();
-        }
     }
 }

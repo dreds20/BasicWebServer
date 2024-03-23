@@ -1,6 +1,7 @@
 package org.dreds20;
 
 import org.dreds20.config.Config;
+import org.dreds20.db.DataBase;
 import org.dreds20.db.DataBaseConfig;
 import org.dreds20.httpserver.ConnectionManager;
 import org.dreds20.httpserver.HttpServer;
@@ -16,10 +17,10 @@ public class Main {
         HttpServer httpServer = HttpServer.create(builder -> builder
                 .executorService(Executors.newVirtualThreadPerTaskExecutor())
                 .connectionManager(new ConnectionManager(
-                        new DatabasePageManager(DataBaseConfig.create(dbConfigBuilder -> dbConfigBuilder
+                        new DatabasePageManager(new DataBase(DataBaseConfig.create(dbConfigBuilder -> dbConfigBuilder
                                 .url(Config.get().getString("db.url"))
                                 .username(Config.get().getString("db.username"))
-                                .password(Config.get().getString("db.password"))))
+                                .password(Config.get().getString("db.password")))))
                         , new ContentLoader())));
         httpServer.start();
     }

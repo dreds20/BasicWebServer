@@ -20,9 +20,9 @@ public class DatabasePageManager implements PageManager {
     private static final String VERBS = "verbs";
     private static final String CONTENT_TYPE = "content_type";
     private static final String PATH = "path";
-    private final DataBaseConfig dbConfig;
-    public DatabasePageManager(DataBaseConfig dbConfig) {
-        this.dbConfig = dbConfig;
+    private final DataBase dataBase;
+    public DatabasePageManager(DataBase dataBase) {
+        this.dataBase = dataBase;
     }
 
     private Page buildPage(ResultSet resultSet) {
@@ -30,11 +30,14 @@ public class DatabasePageManager implements PageManager {
         {
             try {
                 return builder.pageName(resultSet.getString(PAGE))
-                        .verbs(Stream.of(resultSet.getString(VERBS).split(",")).map(HttpVerb::valueOf).collect(Collectors.toList()))
+                        .verbs(Stream.of(resultSet.getString(VERBS).split(","))
+                                .map(String::trim)
+                                .map(String::toUpperCase)
+                                .map(HttpVerb::valueOf).collect(Collectors.toList()))
                         .contentType(resultSet.getString(CONTENT_TYPE))
                         .path(resultSet.getString(PATH));
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Exception thrown while attempting to create page from sql query", e);
             }
         });
     }
@@ -47,15 +50,12 @@ public class DatabasePageManager implements PageManager {
     @Override
     public List<Page> pages() throws Exception {
         List<Page> pages = new ArrayList<>();
-        try (DataBase dataBase = new DataBase(dbConfig)){
-            Connection connection = dataBase.connect();
+        try (Connection connection = dataBase.connect()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM pages;");
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 pages.add(buildPage(resultSet));
             }
-        } catch (Exception e) {
-            throw e;
         }
         return pages;
     }

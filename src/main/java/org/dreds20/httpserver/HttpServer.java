@@ -51,20 +51,21 @@ public class HttpServer extends Thread {
             log.info("Starting http server..");
             while (running) {
                 try (ServerSocket socket = new ServerSocket(config.port());){
-                    log.info("Waiting for request..");
+                    log.debug("Waiting for request..");
                     Socket clientSocket = socket.accept();
                     log.debug("Socket created for '{}'", clientSocket.getRemoteSocketAddress());
-                    log.info("Request received, submitting to executor service..");
                     executorService.submit(new Connection(clientSocket, connectionManager));
                 } catch (IOException e) {
                     throw new HttpServerRuntimeException("Exception thrown during HTTP server execution", e);
                 }
             }
         }
+        log.info("Server stopped..");
     }
 
     @Override
     public void interrupt() {
+        log.info("Stopping http server..");
         running = false;
     }
 }

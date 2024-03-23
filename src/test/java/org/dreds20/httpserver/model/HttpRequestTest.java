@@ -29,37 +29,37 @@ public class HttpRequestTest {
     private static HttpRequest HTTP_REQUEST;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         HTTP_REQUEST = HttpRequest.from(List.of(RAW_REQUEST.split("\n")));
     }
 
     @Test
-    public void verbIsCorrect() {
+    void verbIsCorrect() {
         assertThat(HTTP_REQUEST.verb()).isEqualTo(GET);
     }
 
     @Test
-    public void uriIsCorrect() {
+    void uriIsCorrect() {
         assertThat(HTTP_REQUEST.path()).isEqualTo(URI.create("/"));
     }
 
     @Test
-    public void versionIsCorrect() {
+    void versionIsCorrect() {
         assertThat(HTTP_REQUEST.version()).isEqualTo("HTTP/1.1");
     }
 
     @Test
-    public void headersContainHost() {
+    void headersContainHost() {
         assertThat(HTTP_REQUEST.headers().get("Host")).isEqualTo("127.0.0.1");
     }
 
     @Test
-    public void emptyBody() {
-        assertThat(HTTP_REQUEST.body()).isEqualTo("");
+    void emptyBody() {
+        assertThat(HTTP_REQUEST.body().get()).isEqualTo("");
     }
 
     @Test
-    public void requestWithBody() {
+    void requestWithBody() {
         String body = """
                 line1
                 line2""";
@@ -68,29 +68,41 @@ public class HttpRequestTest {
 
         """ + body;
         HttpRequest request = HttpRequest.from(List.of((RAW_REQUEST + additional).split("\n")));
-        assertThat(request.body()).isEqualTo(body);
+        assertThat(request.body().get()).isEqualTo(body);
     }
 
     @Test
-    public void overloadedConstructor() {
+    void expectedVerbIsCreatedFromRawRequest() {
         HttpRequest request = HttpRequest.from(RAW_REQUEST);
         assertThat(request.verb()).isEqualTo(GET);
     }
 
     @Test
-    public void emptyStringThrowsException() {
+    void emptyStringThrowsException() {
         assertThatThrownBy(() -> HttpRequest.from("")).isInstanceOf(HttpRequestParseException.class);
     }
 
     @Test
-    public void nullStringThrowsException() {
+    void nullStringThrowsException() {
         String nullString = null;
         assertThatThrownBy(() -> HttpRequest.from(nullString)).isInstanceOf(HttpRequestParseException.class);
     }
 
     @Test
-    public void nullListThrowsException() {
+    void nullListThrowsException() {
         List<String> nullList = null;
         assertThatThrownBy(() -> HttpRequest.from(nullList)).isInstanceOf(HttpRequestParseException.class);
+    }
+
+    @Test
+    void firstLineOfRequestIsIncomplete() {
+        String firstLine = "GET / ";
+        assertThatThrownBy(() -> HttpRequest.from(firstLine)).isInstanceOf(HttpRequestParseException.class);
+    }
+
+    @Test
+    void firstLineContainsInvalidUri() {
+        String firstLine = "GET \\invalid  HTTP/1.1";
+        assertThatThrownBy(() -> HttpRequest.from(firstLine)).isInstanceOf(HttpRequestParseException.class);
     }
 }

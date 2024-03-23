@@ -37,39 +37,27 @@ public class DataBaseTest {
     }
 
     @Test
-    void connectionEstablishedWithValidConfig() {
-        try (DataBase dataBase = setupValid()) {
-            assertThat(dataBase.connect()).isNotNull();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void connectionEstablishedWithValidConfig() throws SQLException {
+        DataBase dataBase = setupValid();
+        assertThat(dataBase.connect()).isNotNull();
     }
 
     @Test
     void connectionFailureWithEmptyUrl() {
-        try (DataBase dataBase = setup("", postgres.getUsername(), postgres.getPassword())) {
-            assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        DataBase dataBase = setup("", postgres.getUsername(), postgres.getPassword());
+        assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
     }
 
     @Test
     void connectionFailureWithEmptyUsername() {
-        try (DataBase dataBase = setup(postgres.getJdbcUrl(), "", postgres.getPassword())) {
-            assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        DataBase dataBase = setup(postgres.getJdbcUrl(), "", postgres.getPassword());
+        assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
     }
 
     @Test
     void connectionFailureWithEmptyPassword() {
-        try (DataBase dataBase = setup(postgres.getJdbcUrl(), postgres.getUsername(), "")) {
-            assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        DataBase dataBase = setup(postgres.getJdbcUrl(), postgres.getUsername(), "");
+        assertThatExceptionOfType(SQLException.class).isThrownBy(dataBase::connect);
     }
 
     @Test
