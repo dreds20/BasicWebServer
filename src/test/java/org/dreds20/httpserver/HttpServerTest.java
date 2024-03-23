@@ -24,7 +24,7 @@ public class HttpServerTest {
     ExecutorService executorServiceMock;
 
     @Mock
-    ConnectionManager connectionManagerMock;
+    SimpleConnectionManager connectionManagerMock;
 
 
     final int PORT = 49152;

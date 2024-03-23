@@ -38,6 +38,12 @@ public class Connection extends Thread {
         return HttpRequest.from(rawRequest);
     }
 
+    /**
+     * This method will parse the input from a socket connection made to the server socket to an HttpRequest object,
+     * this will then be dispatched to the ConnectionManager where an appropriate response will be generated.
+     * <p/>
+     * The response will be dispatched to the socket's output stream
+     */
     @Override
     public void run() {
         try (socket;
@@ -48,7 +54,7 @@ public class Connection extends Thread {
             HttpRequest request = extractRequest(in);
             log.debug("Request received: {}", request);
 
-            String response = connectionManager.getResponse(request);
+            String response = connectionManager.getResponse(request).toString();
             log.debug("Dispatching response: {}", response);
 
             out.print(response);

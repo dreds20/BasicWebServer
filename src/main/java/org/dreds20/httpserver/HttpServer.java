@@ -2,17 +2,11 @@ package org.dreds20.httpserver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dreds20.httpserver.pages.ContentLoader;
-import org.dreds20.httpserver.pages.DatabasePageManager;
-import org.dreds20.utils.ImmutableDefault;
-import org.immutables.value.Value;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.UnaryOperator;
 
 /**
@@ -34,20 +28,46 @@ public class HttpServer extends Thread {
         this.config = config;
     }
 
+    /**
+     * A static creation method for the HTTP server which can utilise a builder of the HttpServerConfig
+     * object to create the configuration, e.g.
+     * <pre>
+     *     {@code HttpServer httpServer = HttpServer.create(builder -> builder
+     *                 .executorService(Executors.newVirtualThreadPerTaskExecutor())...}
+     * </pre>
+     *
+     * @param spec This param should be a lambda function representing the builder
+     *             that will create the HttpServer Configuration object
+     *
+     * @return an HttpServer thread which can be executed with the start method
+     */
     public static HttpServer create(UnaryOperator<HttpServerConfigImpl.Builder> spec) {
         return new HttpServer(HttpServerConfig.create(spec));
     }
 
+    /**
+     * This static create method will construct an instance of an HttpServer with a provided
+     * HttpServerConfig object
+     *
+     * @param config An HttpServerConfig object with all the necessary configuration to instantiate
+     *               the HttpServer class
+     *
+     * @return an HttpServer thread which can be executed with the start method
+     */
     public static HttpServer create(HttpServerConfig config) {
         return new HttpServer(config);
     }
 
+    /**
+     * This method will start the HttpServer, the expectation is that this would be executed from the
+     * start method.
+     */
     @Override
     public void run() {
         running = true;
 
         try (ExecutorService executorService = config.executorService()) {
-            ConnectionManager connectionManager = config.connectionManager();
+            SimpleConnectionManager connectionManager = config.connectionManager();
             log.info("Starting http server..");
             while (running) {
                 try (ServerSocket socket = new ServerSocket(config.port());){
@@ -63,6 +83,9 @@ public class HttpServer extends Thread {
         log.info("Server stopped..");
     }
 
+    /**
+     * An override of the interrupt method which will stop the execution of the Http Server
+     */
     @Override
     public void interrupt() {
         log.info("Stopping http server..");

@@ -24,7 +24,7 @@ public class HttpServerConfigTest {
     @Test
     void nullPointerWhenNullConnectionManagerProvided() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> HttpServerConfig.builder()
-                .connectionManager((ConnectionManager) null)
+                .connectionManager((SimpleConnectionManager) null)
                 .executorService(Executors.newFixedThreadPool(1)).build());
     }
 
@@ -38,20 +38,20 @@ public class HttpServerConfigTest {
     void nullPointerWhenNullExecutorServiceProvided() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> HttpServerConfig.builder()
                 .executorService((ExecutorService) null)
-                .connectionManager(new ConnectionManager(pageManagerMock, contentLoaderMock)).build());
+                .connectionManager(new SimpleConnectionManager(pageManagerMock, contentLoaderMock)).build());
     }
 
     @Test
     void defaultExecutorService() {
         HttpServerConfig config = HttpServerConfig.builder()
-                .connectionManager(new ConnectionManager(pageManagerMock, contentLoaderMock)).build();
+                .connectionManager(new SimpleConnectionManager(pageManagerMock, contentLoaderMock)).build();
         assertThat(config.executorService()).isInstanceOf(ExecutorService.class);
     }
 
     @Test
     void defaultPortIs80() {
         HttpServerConfig config = HttpServerConfig.create(builder -> builder
-                .connectionManager((new ConnectionManager(pageManagerMock, contentLoaderMock)))
+                .connectionManager((new SimpleConnectionManager(pageManagerMock, contentLoaderMock)))
                 .executorService(Executors.newFixedThreadPool(1)));
         assertThat(config.port()).isEqualTo(80);
     }

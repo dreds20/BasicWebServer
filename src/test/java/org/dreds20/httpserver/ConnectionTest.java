@@ -1,6 +1,7 @@
 package org.dreds20.httpserver;
 
 import org.dreds20.httpserver.model.HttpRequest;
+import org.dreds20.httpserver.model.HttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,9 @@ public class ConnectionTest {
     @Mock
     OutputStream outputStreamMock;
 
+    @Mock
+    HttpResponse httpResponseMock;
+
     private static String REQUEST = "GET / HTTP/1.1\n" +
             "Host: 127.0.0.1\n" +
             "Connection: keep-alive\n" +
@@ -48,6 +52,7 @@ public class ConnectionTest {
     void beforeEach() throws IOException {
         when(clientSocketMock.getInputStream()).thenReturn(new ByteArrayInputStream(REQUEST.getBytes(StandardCharsets.UTF_8)));
         when(clientSocketMock.getOutputStream()).thenReturn(outputStreamMock);
+        when(connectionManagerMock.getResponse(any())).thenReturn(httpResponseMock);
     }
 
     @Test
