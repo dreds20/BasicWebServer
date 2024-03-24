@@ -5,7 +5,7 @@ import org.dreds20.db.DataBase;
 import org.dreds20.db.DataBaseConfig;
 import org.dreds20.httpserver.SimpleConnectionManager;
 import org.dreds20.httpserver.HttpServer;
-import org.dreds20.httpserver.pages.ContentLoader;
+import org.dreds20.httpserver.pages.FileContentLoader;
 import org.dreds20.httpserver.pages.DatabasePageManager;
 
 import java.util.concurrent.Executors;
@@ -18,10 +18,10 @@ public class Main {
                 .executorService(Executors.newVirtualThreadPerTaskExecutor())
                 .connectionManager(new SimpleConnectionManager(
                         new DatabasePageManager(new DataBase(DataBaseConfig.create(dbConfigBuilder -> dbConfigBuilder
-                                .url(Config.get().getString("db.url"))
-                                .username(Config.get().getString("db.username"))
-                                .password(Config.get().getString("db.password")))))
-                        , new ContentLoader())));
+                                .url(Config.getString("db.url"))
+                                .username(Config.getString("db.username"))
+                                .password(Config.getString("db.password")))))
+                        , new FileContentLoader())));
         httpServer.start();
     }
 }

@@ -3,10 +3,14 @@ package org.dreds20.httpserver.model;
 import org.immutables.value.Value;
 import org.dreds20.utils.ImmutableDefault;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
+/**
+ * An HttpResponse object, contains properties to represent components of a valid HttpResponse
+ */
 @Value.Immutable
 @ImmutableDefault
 public abstract class HttpResponse {
@@ -57,14 +61,26 @@ public abstract class HttpResponse {
     @Value.Parameter
     public abstract List<String> body();
 
+    /**
+     * Parses the HttpResponse object to a String
+     *
+     * @return A Http Response object formatted correctly as a String
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(version()).append(" ").append(statusCode().toString());
-        headers().forEach((key, value) -> sb.append("\n").append(key).append(": ").append(value));
+        headers().forEach((key, value) -> sb.append("\r\n").append(key).append(": ").append(value));
         if (!body().isEmpty()) {
-            sb.append("\n");
-            body().forEach(line -> sb.append("\n").append(line));
+            StringBuilder bodySB = new StringBuilder();
+            body().forEach(line -> bodySB.append(line));
+            String encodedBody = new String(bodySB.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+            int contentLength = encodedBody.getBytes().length;
+            sb.append("\r\n")
+                    .append("Content-Length: ")
+                    .append(contentLength)
+                    .append("\r\n\r\n")
+                    .append(encodedBody);
         }
         return sb.toString();
     }
@@ -78,6 +94,13 @@ public abstract class HttpResponse {
         builder.statusCode(HttpStatus.fromCode(Integer.parseInt(tokens[1])));
     }
 
+    /**
+     * A static factory method that will parse a String representation of an HttpResponse into an HttpResponse object
+     *
+     * @param response the raw response in String form to be parsed to an HttpResponse object
+     *
+     * @return An instance of HttpResponse parsed from the provided raw String
+     */
     public static HttpResponse from(String response) {
         if (response == null) {
             throw new NullPointerException("Cannot parse null string to Http response");

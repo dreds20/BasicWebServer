@@ -10,9 +10,24 @@ import org.dreds20.httpserver.model.HttpStatus;
  * and should be responsible for handling requests dispatched to the HttpServer and providing responses
  */
 public interface ConnectionManager {
-
+    /**
+     * The implementation of this method will be responsible for translating http requests to http responses
+     *
+     * @param request An HttpRequest object parsed from a connection established to the http server
+     *
+     * @return Returns an HttpResponse object
+     */
     HttpResponse getResponse(HttpRequest request);
+
+    /**
+     * The implementation of this method will be responsible for translating http requests to http response
+     *
+     * @param request An HttpRequest object parsed from a connection established to the http server
+     *
+     * @return Returns an HttpResponse object as a string
+     */
     String getResponseString(HttpRequest request);
+
     static HttpResponseImpl.Builder getFailureBuilder() {
         return HttpResponse.builder().statusCode(HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -30,24 +30,24 @@ public class HttpResponseTest {
     @Test
     void headersAreIncluded() {
         Map<String, String> headers = Map.of("Content-Type", "text/html");
-        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
+        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).build().toString()).isEqualTo("HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html");
     }
 
     @Test
     void bodyIsIncluded() {
         String body = "Test body";
-        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
-                "\n" + body);
+        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\r\nContent-Length: 9\r\n" +
+                "\r\n" + body);
     }
 
     @Test
     void bodyAndHeadersAreIncluded() {
         String body = "Test body";
         Map<String, String> headers = Map.of("Content-Type", "text/html");
-        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\n" +
-                "Content-Type: text/html\n" +
-                "\n" + body);
+        assertThat(HttpResponse.builder().statusCode(HttpStatus.OK).headers(headers).body(List.of(body)).build().toString()).isEqualTo("HTTP/1.1 200 OK\r\n" +
+                "Content-Type: text/html\r\nContent-Length: 9\r\n" +
+                "\r\n" + body);
     }
 
     @Test

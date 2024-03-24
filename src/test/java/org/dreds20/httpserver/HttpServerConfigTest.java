@@ -1,6 +1,6 @@
 package org.dreds20.httpserver;
 
-import org.dreds20.httpserver.pages.ContentLoader;
+import org.dreds20.httpserver.pages.FileContentLoader;
 import org.dreds20.httpserver.pages.PageManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ public class HttpServerConfigTest {
     PageManager pageManagerMock;
 
     @Mock
-    ContentLoader contentLoaderMock;
+    FileContentLoader contentLoaderMock;
 
     @Test
     void nullPointerWhenNullConnectionManagerProvided() {

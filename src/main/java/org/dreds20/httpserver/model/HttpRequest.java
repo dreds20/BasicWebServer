@@ -10,6 +10,9 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
+/**
+ * An object representation of an HttpRequest
+ */
 @Value.Immutable
 @ImmutableDefault
 public interface HttpRequest {
@@ -26,7 +29,8 @@ public interface HttpRequest {
         return spec.apply(builder()).build();
     }
 
-    /**     * HTTP verb used in a request, e.g. PUT, POST etc.
+    /**
+     * HTTP verb used in a request, e.g. PUT, POST etc.
      *
      * @return HttpVerb - The HTTP verb used in a response
      */
@@ -80,10 +84,11 @@ public interface HttpRequest {
     }
 
     /**
+     * Parses a list of Strings into a HttpRequest object
      *
+     * @param rawRequest A list of Strings containing the raw HttpRequest
      *
-     * @param rawRequest
-     * @return
+     * @return an HttpRequest object parsed from the list of Strings provided
      */
     static HttpRequest from(List<String> rawRequest) {
         if (rawRequest == null || rawRequest.isEmpty()) {
@@ -114,6 +119,13 @@ public interface HttpRequest {
         return builder.build();
     }
 
+    /**
+     * Parses a String into a HttpRequest object
+     *
+     * @param rawRequest A String containing the raw HttpRequest
+     *
+     * @return an HttpRequest object parsed from the String provided
+     */
     static HttpRequest from(String rawRequest) {
         if (rawRequest == null || rawRequest.isEmpty()) {
             throw new HttpRequestParseException("Raw request provided is null or empty");

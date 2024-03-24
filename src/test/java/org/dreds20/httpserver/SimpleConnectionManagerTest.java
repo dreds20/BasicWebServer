@@ -5,7 +5,7 @@ import org.dreds20.httpserver.model.HttpRequest;
 import org.dreds20.httpserver.model.HttpResponse;
 import org.dreds20.httpserver.model.HttpStatus;
 import org.dreds20.httpserver.model.HttpVerb;
-import org.dreds20.httpserver.pages.ContentLoader;
+import org.dreds20.httpserver.pages.FileContentLoader;
 import org.dreds20.httpserver.pages.Page;
 import org.dreds20.httpserver.pages.PageManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SimpleConnectionManagerTest {
     @Mock PageManager pageManagerMock;
-    @Mock ContentLoader contentLoaderMock;
+    @Mock
+    FileContentLoader contentLoaderMock;
     @Mock Page pageMock;
     SimpleConnectionManager connectionManager;
     HttpRequest request = HttpRequest.create(builder -> builder.path(URI.create("/")).verb(HttpVerb.GET).version("HTTP/1.1"));
