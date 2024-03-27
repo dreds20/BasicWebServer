@@ -2,8 +2,8 @@ package org.dreds20.httpserver.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.immutables.value.Value;
 import org.dreds20.utils.ImmutableDefault;
+import org.immutables.value.Value;
 
 import java.net.URI;
 import java.net.URISyntaxException;
