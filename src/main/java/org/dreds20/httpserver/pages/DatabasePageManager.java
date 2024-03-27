@@ -1,12 +1,12 @@
 package org.dreds20.httpserver.pages;
 
 import org.dreds20.db.DataBase;
-import org.dreds20.db.DataBaseConfig;
 import org.dreds20.httpserver.model.HttpVerb;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

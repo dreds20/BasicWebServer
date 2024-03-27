@@ -3,10 +3,10 @@ package org.dreds20;
 import org.dreds20.config.Config;
 import org.dreds20.db.DataBase;
 import org.dreds20.db.DataBaseConfig;
-import org.dreds20.httpserver.SimpleConnectionManager;
 import org.dreds20.httpserver.HttpServer;
-import org.dreds20.httpserver.pages.FileContentLoader;
+import org.dreds20.httpserver.SimpleConnectionManager;
 import org.dreds20.httpserver.pages.DatabasePageManager;
+import org.dreds20.httpserver.pages.FileContentLoader;
 
 import java.util.concurrent.Executors;
 

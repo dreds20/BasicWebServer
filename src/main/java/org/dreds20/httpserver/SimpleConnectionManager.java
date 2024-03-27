@@ -7,11 +7,10 @@ import org.dreds20.httpserver.model.HttpRequest;
 import org.dreds20.httpserver.model.HttpResponse;
 import org.dreds20.httpserver.model.HttpResponseImpl;
 import org.dreds20.httpserver.model.HttpStatus;
-import org.dreds20.httpserver.pages.FileContentLoader;
+import org.dreds20.httpserver.pages.ContentLoader;
 import org.dreds20.httpserver.pages.Page;
 import org.dreds20.httpserver.pages.PageManager;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -36,7 +35,7 @@ import java.util.Locale;
 public class SimpleConnectionManager implements ConnectionManager {
     private static final Logger log = LogManager.getLogger(SimpleConnectionManager.class);
     private final PageManager pageManager;
-    private final FileContentLoader contentLoader;
+    private final ContentLoader contentLoader;
     private static final String HTML_DATE_PATTERN = "EEE, dd MMM yyyy HH:mm:ss z";
 
     /**
@@ -47,7 +46,7 @@ public class SimpleConnectionManager implements ConnectionManager {
      * @param contentLoader a ContentLoader object is responsible for loading the body from the resource specified
      *                      in the returned page from the PageManager look up
      */
-    public SimpleConnectionManager(PageManager pageManager, FileContentLoader contentLoader) {
+    public SimpleConnectionManager(PageManager pageManager, ContentLoader contentLoader) {
         if (pageManager == null || contentLoader == null) {
             throw new NullPointerException("PageManager or ContentLoader object not provided");
         }

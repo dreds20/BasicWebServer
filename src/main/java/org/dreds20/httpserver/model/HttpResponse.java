@@ -1,7 +1,7 @@
 package org.dreds20.httpserver.model;
 
-import org.immutables.value.Value;
 import org.dreds20.utils.ImmutableDefault;
+import org.immutables.value.Value;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

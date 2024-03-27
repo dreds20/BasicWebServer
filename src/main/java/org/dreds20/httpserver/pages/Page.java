@@ -1,10 +1,9 @@
 package org.dreds20.httpserver.pages;
 
-import org.immutables.value.Value;
 import org.dreds20.httpserver.model.HttpVerb;
 import org.dreds20.utils.ImmutableDefault;
+import org.immutables.value.Value;
 
-import java.net.URI;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
